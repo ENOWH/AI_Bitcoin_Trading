@@ -1,4 +1,3 @@
-
 import os
 from dotenv import load_dotenv
 import pyupbit
@@ -31,6 +30,9 @@ def ai_trading():
     # 24시간 시간봉 데이터
     df_hourly = pyupbit.get_ohlcv("KRW-BTC", interval="minute60", count=24)
 
+    # 5분 봉 데이터 추가
+    df_5min = pyupbit.get_ohlcv("KRW-BTC", interval="minute5", count=288)  # 5분 봉 * 288개 (24시간)
+
     # AI에게 데이터 제공하고 판단 받기
     client = OpenAI()
 
@@ -54,7 +56,7 @@ def ai_trading():
         },
         {
         "role": "user",
-        "content": f"Current investment status: {json.dumps(filtered_balances)}\nOrderbook: {json.dumps(orderbook)}\nDaily OHLCV with indicators (30 days): {df_daily.to_json()}\nHourly OHLCV with indicators (24 hours): {df_hourly.to_json()}"
+        "content": f"Current investment status: {json.dumps(filtered_balances)}\nOrderbook: {json.dumps(orderbook)}\nDaily OHLCV with indicators (30 days): {df_daily.to_json()}\nHourly OHLCV with indicators (24 hours): {df_hourly.to_json()}\n5-Minute OHLCV with indicators (last 24 hours): {df_5min.to_json()}"
         }
     ],
     response_format={
